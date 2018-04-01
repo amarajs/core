@@ -1,0 +1,81 @@
+{
+  "name": "@amarajs/core",
+  "amdName": "Amara",
+  "version": "0.1.0",
+  "description": "Coordinates plugin middleware for the AmaraJS framework.",
+  "jsnext:main": "src/index.js",
+  "main": "dist/amara-core.js",
+  "umd:main": "dist/amara-core.umd.js",
+  "scripts": {
+    "bump": "standard-version",
+    "testonly": "mocha --compilers js:babel-register test/**/*.js",
+    "lint": "eslint src test",
+    "test": "flow && npm run lint && npm run testonly",
+    "build": "npm-run-all clean -p rollup:* -p minify:* -s size",
+    "clean": "rimraf dist && mkdirp dist",
+    "rollup:cjs": "rollup -c rollup.config.js -f cjs -n Amara src/index.js -o dist/amara-core.js",
+    "rollup:umd": "rollup -c rollup.config.js -f umd -n Amara src/index.js -o dist/amara-core.umd.js",
+    "minify:cjs": "uglifyjs dist/amara-core.js -cm toplevel -o dist/amara-core.min.js -p relative --source-map dist/amara-core.min.js.map",
+    "minify:umd": "uglifyjs dist/amara-core.umd.js -cm -o dist/amara-core.umd.min.js -p relative --source-map dist/amara-core.umd.min.js.map",
+    "size": "strip-json-comments --no-whitespace dist/amara-core.min.js | gzip-size | pretty-bytes",
+    "release": "npm run build -s && npm run bump && git push --follow-tags origin master && npm publish"
+  },
+  "keywords": [
+    "amara",
+    "amarajs",
+    "core"
+  ],
+  "authors": [
+    "Dan Barnes <amarajs.framework@gmail.com>"
+  ],
+  "repository" : {
+    "type" : "git",
+    "url" : "https://github.com/amarajs/core.git"
+  },
+  "license": "MIT",
+  "files": [
+    "src",
+    "dist"
+  ],
+  "eslintConfig": {
+    "parser": "babel-eslint",
+    "extends": "eslint:recommended",
+    "env": {
+      "browser": true,
+      "node": true,
+      "mocha": true,
+      "es6": true
+    },
+    "globals": {
+      "expect": true
+    },
+    "rules": {
+      "no-cond-assign": 0
+    }
+  },
+  "devDependencies": {
+    "babel-core": "^6.9.1",
+    "babel-eslint": "^7.1.1",
+    "babel-plugin-transform-flow-strip-types": "^6.21.0",
+    "babel-preset-es2015": "^6.9.0",
+    "babel-preset-stage-0": "^6.5.0",
+    "babel-register": "^6.9.0",
+    "chai": "^3.5.0",
+    "eslint": "^3.13.1",
+    "flow-bin": "^0.38.0",
+    "gzip-size-cli": "^1.0.0",
+    "mkdirp": "^0.5.1",
+    "mocha": "^3.2.0",
+    "npm-run-all": "^2.1.1",
+    "pretty-bytes-cli": "^2.0.0",
+    "rimraf": "^2.5.2",
+    "rollup": "^0.41.4",
+    "rollup-plugin-buble": "^0.15.0",
+    "rollup-plugin-flow": "^1.1.1",
+    "sinon": "^4.4.6",
+    "sinon-chai": "^2.8.0",
+    "standard-version": "^4.0.0",
+    "strip-json-comments-cli": "^1.0.1",
+    "uglify-js": "^2.6.2"
+  }
+}
