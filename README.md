@@ -1,12 +1,15 @@
-## @amarajs/core
+## [@amarajs/core](https://github.com/amarajs/core)
 
 Provides feature-based development using an extensible plugin-based targeting system.
 
-<center>
-  <strong>IMPORTANT!</strong><br>
-  AmaraJS is an early alpha release.<br>
-  Bug reports and general feedback are welcome.
-</center>
+> __IMPORTANT!__  
+> AmaraJS is an early alpha release.  
+> Bug reports and general feedback are welcome.
+
+### Amara in Action
+
+Sample App: https://amarajs.github.io  
+jsFiddle: https://jsfiddle.net/04f3v2x4
 
 ### Why AmaraJS?
 
@@ -89,7 +92,7 @@ method | arguments | description
 --- | --- | ----
 `add` | `Object` | Registers the specified feature with `@amarajs/core`. The argument should be a valid AmaraJS feature object. The required and optional properties are outlined later in this document. You can call `add` at any time, before or after bootstrap or configuration.
 `config` | `String`, `Function` | Registers a configuration method to further control how AmaraJS works with features. The currently configurable options are `"filter"` and `"sorter"`. Examples are below.
-`bootstrap` | `any` | Initializes AmaraJS with the given target. The target type to provide depends on which `engine` middleware you provided to the `Amara` constructor. For example, `@amarajs/plugin-engine-browser` expects a DOM node.
+`bootstrap` | `any` | Initializes AmaraJS with the given target. The target type to provide depends on which `engine` middleware you provided to the `Amara` constructor. For example, [`@amarajs/plugin-engine-browser`](https://github.com/amarajs/plugin-engine-browser) expects a DOM node.
 
 Each method returns the `Amara` instance to enable chaining:
 
@@ -132,17 +135,17 @@ amara
 
 There is a growing list of Amara middleware available for use. Standard middleware includes:
 
- - `@amarajs/plugin-engine-browser`  
+ - [`@amarajs/plugin-engine-browser`](https://github.com/amarajs/plugin-engine-browser)  
  Provides `@amarajs/core` with functionality related to DOM nodes, for use in web-based applications.
- - `@amarajs/plugin-css`  
+ - [`@amarajs/plugin-css`](https://github.com/amarajs/plugin-css)  
  Attach CSS styles and class names to DOM nodes.
- - `@amarajs/plugin-dom`  
+ - [`@amarajs/plugin-dom`](https://github.com/amarajs/plugin-dom)  
  Add HTML to DOM nodes.
- - `@amarajs/plugin-events`  
+ - [`@amarajs/plugin-events`](https://github.com/amarajs/plugin-events)  
  Attach event handlers to DOM nodes.
- - `@amarajs/plugin-redux`  
+ - [`@amarajs/plugin-redux`](https://github.com/amarajs/plugin-redux)  
  Dispatch actions against a Redux store.
- - `@amarajs/plugin-router`  
+ - [`@amarajs/plugin-router`](https://github.com/amarajs/plugin-router)  
  Dynamic client-side routing, including nested and sibling routes.
 
 ### Developing Features
@@ -152,8 +155,8 @@ Once you've registered the middleware you want with your Amara instance, you can
 property | type | required | description | example
 --- | --- | --- | --- | ---
 type | `String` | `true` | Each middleware specifies the `type` value it handles. | `"css"`<br>`"dom"`<br>`"events"`
-targets | `String[]` | `true` | An array of target selector strings. The `engine` plugin you choose determines how these selectors are handled. For example, the `@amarajs/plugin-engine-browser` expects CSS selectors. | `["#main"]`<br>`['input[type="button"]']`<br>`['a[href^="#"]']`
-apply | `Function` | `true` | A function that returns whatever values the middleware type expects. For example, `@amarajs/plugin-events`  expects a map of event names to handlers. | (see plugin documentation)
+targets | `String[]` | `true` | An array of target selector strings. The `engine` plugin you choose determines how these selectors are handled. For example, the [`@amarajs/plugin-engine-browser`](https://github.com/amarajs/plugin-engine-browser) plugin expects CSS selectors. | `["#main"]`<br>`['input[type="button"]']`<br>`['a[href^="#"]']`
+apply | `Function` | `true` | A function that returns whatever values the middleware type expects. For example, [`@amarajs/plugin-events`](https://github.com/amarajs/plugin-events) expects a map of event names to handlers. | (see plugin documentation)
 args | `Object` | `false` | A map of argument names to selector functions. The value returned by the selector function will be passed to your `apply` function in an object literal, along with any other arguments you specify. | (see example below)
 
 Each feature is also given an `id` number when added that is used internally to ensure features are applied in the order they were added. If you specify your own `id` property, it will be overwritten by Amara.
@@ -332,12 +335,12 @@ Amara dispatches various actions that plugin middleware can listen and respond t
 
 action.type | action.payload | purpose
 --- | --- | ---
-`"core:bootstrap"` | `{`<br>&nbsp;&nbsp;`target,`<br>&nbsp;&nbsp;<nobr>`register: (string, fn) => fn`</nobr><br>`}` | Notifies middleware of the bootstrapped target, and provides a method middleware can use to register one (and only one) "argument provider" function for a given key.<p>The provider should accept a single argument, `target`, and should return the value that will be provided to a feature's `args` selector method for the specified key. See `@amarajs/plugin-router`'s source code for an example.<p>When invoked, the register method returns a function that middleware can invoke to un-register the provider method.
+`"core:bootstrap"` | `{`<br>&nbsp;&nbsp;`target,`<br>&nbsp;&nbsp;<nobr>`register: (string, fn) => fn`</nobr><br>`}` | Notifies middleware of the bootstrapped target, and provides a method middleware can use to register one (and only one) "argument provider" function for a given key.<p>The provider should accept a single argument, `target`, and should return the value that will be provided to a feature's `args` selector method for the specified key. See `@amarajs/plugin-router`'s [source code](https://github.com/amarajs/plugin-router) for an example.<p>When invoked, the register method returns a function that middleware can invoke to un-register the provider method.
 `"core:features-added"` | `Set<feature>` | Notifies middleware that the user has added one or more features to the amara instance.
 `"core:change-occurred"` | `string` | Usually dispatched by middleware to notify the AmaraJS instance that it should re-evaluate any features which accessed the specified `args` key. This is usually fired by the same middleware which registered an "argument provider" method during `core:bootstrap`.
 <nobr>`"core:populate-feature-targets"`</nobr> | `Map<feature, Set<any>>` | The AmaraJS instance has identified some features which need to be re-applied, and would like the "engine" plugin to add the appropriate targets to the given Set.
 `"core:enqueue-apply"` | `Array<{feature, target}>` | Usually fired by "engine" middleware to notify the AmaraJS instance exactly which features and targets need to be re-applied at the end of the current frame.
-`"core:apply-target-results"` | `Map<target, any[]>` | Sent to middleware so they can apply the given array of feature `apply` methods results to the specified target. For example, `@amarajs/plugin-dom` receives an array of VirtualDOM nodes and will apply them to the target HTML node in order.
+`"core:apply-target-results"` | `Map<target, any[]>` | Sent to middleware so they can apply the given array of feature `apply` methods results to the specified target. For example, [`@amarajs/plugin-dom`](https://github.com/amarajs/plugin-dom) receives an array of VirtualDOM nodes and will apply them to the target HTML node in order.
 `"error"` | `Error` | An error occurred in a middleware handler while dispatching an action. Because middleware may operate as a pipeline, subsequent middleware handlers will _not_ be invoked for the given action.
 
 ### Developing Abstractions for AmaraJS
@@ -417,9 +420,9 @@ __If you implement a decorator library for AmaraJS, let us know and we will link
 
 For performance reasons, AmaraJS monitors each feature's `args` map to determine which middleware-provided parameters are accessed the first time each selector is invoked. This allows Amara to limit feature re-application only to when those specific properties change.
 
-For example, if your feature's `args` map never accesses `routeParams`, but `@amarajs/plugin-router` notified Amara that the `routeParams` had changed, then Amara won't re-invoke your feature's `apply` method.
+For example, if your feature's `args` map never accesses `routeParams`, but [`@amarajs/plugin-router`](https://github.com/amarajs/plugin-router) notified Amara that the `routeParams` had changed, then Amara won't re-invoke your feature's `apply` method.
 
-Accordingly, your features' `args` maps should be written to avoid conditional access to map properties. For example, code like this should be avoided because it conditionally accesses the `state` property provided by `@amarajs/plugin-redux`:
+Accordingly, your features' `args` maps should be written to avoid conditional access to map properties. For example, code like this should be avoided because it conditionally accesses the `state` property provided by [`@amarajs/plugin-redux`](https://github.com/amarajs/plugin-redux):
 
 ```javascript
 amara.add({
@@ -536,7 +539,7 @@ In MVC and component-driven development, a controller typically imports shared f
 
 Each approach bypasses the browser's own built-in event system and so misses out on some neat possibilities.
 
-If you're using `@amarajs/plugin-events`, any DOM event dispatched from your handler will eventually bubble up to the node you used to bootstrap your `Amara` instance. When this happens, the middleware will automatically route that event through `Amara` as an action, enabling your other middleware to respond to that action in turn. For example, `@amarajs/plugin-redux` will further route that action to your Redux store, at which point your reducers, saga middleware, or thunks could execute their business logic.
+If you're using [`@amarajs/plugin-events`](https://github.com/amarajs/plugin-events), any DOM event dispatched from your handler will eventually bubble up to the node you used to bootstrap your `Amara` instance. When this happens, the middleware will automatically route that event through `Amara` as an action, enabling your other middleware to respond to that action in turn. For example, [`@amarajs/plugin-redux`](https://github.com/amarajs/plugin-redux) will further route that action to your Redux store, at which point your reducers, saga middleware, or thunks could execute their business logic.
 
 DOM events should be preferred over dependency injection and direct Redux dispatches whenever possible so that any DOM nodes between the dispatching node and the bootstrap node can interact with the event (or cancel it entirely), _before_ it reaches your other AmaraJS middleware.
 
@@ -677,7 +680,7 @@ amara
     });
 ```
 
-When the `'tracking-event'` custom event reaches the root node, `@amarajs/plugin-events` will dispatch it as an action to Amara middleware, including our custom Google Analytics middleware, which joins the label array together and sends the event to GA.
+When the `'tracking-event'` custom event reaches the root node, [`@amarajs/plugin-events`](https://github.com/amarajs/plugin-events) will dispatch it as an action to Amara middleware, including our custom Google Analytics middleware, which joins the label array together and sends the event to GA.
 
 Hopefully, this gives you a better sense of how easy it is to develop features using the AmaraJS framework. We never even touched the existing button component, and yet we've added powerful contextual event tracking to every button instance!
 
@@ -685,9 +688,9 @@ Hopefully, this gives you a better sense of how easy it is to develop features u
 
  - __What happens when 2 or more features have the same `type` and `targets` properties? Which `apply` method "wins"?__
 
-    It is the plugin middleware's responsibility to resolve this issue. For example, if the `@amarajs/plugin-css` middleware receives multiple arrays of class names for the same target, it simply combines all the class names together. The HTML5 `classList` interface ensures uniqueness automatically.
+    It is the plugin middleware's responsibility to resolve this issue. For example, if the [`@amarajs/plugin-css`](https://github.com/amarajs/plugin-css) middleware receives multiple arrays of class names for the same target, it simply combines all the class names together. The HTML5 `classList` interface ensures uniqueness automatically.
     
-    But `@amarajs/plugin-dom` appends each DOM collection it receives to the target element in the order it was received. This ensures that no DOM returned by a feature is mysteriously discarded. If the order the results are applied matters, a custom `"sorter"` configuration method can be added to the `amara` instance.
+    But [`@amarajs/plugin-dom`](https://github.com/amarajs/plugin-dom) appends each DOM collection it receives to the target element in the order it was received. This ensures that no DOM returned by a feature is mysteriously discarded. If the order the results are applied matters, a custom `"sorter"` configuration method can be added to the `amara` instance.
     
     More generally, you should read each middleware plugin's documentation to better understand how it applies multiple results to the same target.
 
@@ -697,7 +700,7 @@ Have you hit a roadblock using AmaraJS? If so, please let us know by opening an 
 
 If you have a feature request, please create a new issue so the community can discuss it.
 
-If you find a defect, please submit a bug report that includes a working link to reproduce the problem (for example, using [jsBin](https://jsbin.com)). Of course, pull requests to fix open issues are always welcome!
+If you find a defect, please submit a bug report that includes a working link to reproduce the problem (for example, using [this fiddle](https://jsfiddle.net/04f3v2x4/)). Of course, pull requests to fix open issues are always welcome!
 
 ### License
 
