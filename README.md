@@ -86,6 +86,8 @@ amara
 
 There is a growing list of Amara middleware available for use. Standard middleware includes:
 
+#### Browser Middleware Plugins
+
  - [`@amarajs/plugin-engine-browser`](https://github.com/amarajs/plugin-engine-browser)  
  Provides `@amarajs/core` with functionality related to DOM nodes, for use in web-based applications.
  - [`@amarajs/plugin-css`](https://github.com/amarajs/plugin-css)  
@@ -98,6 +100,15 @@ There is a growing list of Amara middleware available for use. Standard middlewa
  Dispatch actions against a Redux store.
  - [`@amarajs/plugin-router`](https://github.com/amarajs/plugin-router)  
  Dynamic client-side routing, including nested and sibling routes.
+
+#### Server Middleware Plugins
+
+ - [`@amarajs/plugin-engine-server`](https://github.com/amarajs/plugin-engine-server)  
+ Provides `@amarajs/core` with functionality related to Koa HTTP requests, for use in server-based applications.
+ - [`@amarajs/plugin-bundle`](https://github.com/amarajs/plugin-bundle)  
+ Uses [Rollup](https://rollupjs.org/) to bundle files dynamically on the server.
+ - [`@amarajs/plugin-doclet`](https://github.com/amarajs/plugin-doclet)  
+ Makes file doclets available to features through the `args` map.
 
 ### Contributing
 
