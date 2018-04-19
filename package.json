@@ -1,7 +1,7 @@
 {
   "name": "@amarajs/core",
   "amdName": "Amara",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Coordinates plugin middleware for the AmaraJS framework.",
   "jsnext:main": "src/index.js",
   "main": "dist/amara-core.js",
