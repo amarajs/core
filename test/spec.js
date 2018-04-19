@@ -43,7 +43,8 @@ describe('Amara', function() {
         it('schedules core:features-added', function(done) {
             Amara(this.mw()).add({type: 'type', targets: ['target'], apply: () => {}});
             setTimeout(() => {
-                expect(this.actions[0].type).equals('core:features-added');
+                const result = this.actions.find(action => action.type === 'core:features-added');
+                expect(result).defined;
                 done();
             });
         });
@@ -55,7 +56,7 @@ describe('Amara', function() {
                 .add(feature1)
                 .add(feature2);
             setTimeout(() => {
-                const {payload} = this.actions[0];
+                const {payload} = this.actions.find(action => action.type === 'core:features-added');
                 expect(payload.size).equals(2);
                 expect(payload.has(feature1)).true;
                 expect(payload.has(feature2)).true;
@@ -211,21 +212,23 @@ describe('Amara', function() {
                 let dispatch;
                 const feature = {type: 'type', targets: ['target'], apply: () => 'abc'};
                 const handler = sinon.stub();
-                handler.onFirstCall().callsFake(() => {
+                Amara([(dispatcher) => {
+                    dispatch = dispatcher;
+                    return handler;
+                }]).add(feature);
+                const token = setInterval(() => {
+                    const action = handler.lastCall.args[0];
+                    if(action.type === 'core:apply-target-results') {
+                        clearInterval(token);
+                        done();
+                    }
+                }, 10);
+                setTimeout(() => {
                     dispatch({
                         type: 'core:enqueue-apply',
                         payload: [{feature, targets: [{}]}]
                     });
                 });
-                Amara([(dispatcher) => {
-                    dispatch = dispatcher;
-                    return handler;
-                }]).add(feature);
-                setTimeout(() => {
-                    const action = handler.lastCall.args[0];
-                    expect(action.type).equals('core:apply-target-results');
-                    done();
-                }, 2);
             });
 
             it('has expected payload', function(done) {
@@ -233,24 +236,24 @@ describe('Amara', function() {
                 const target = {};
                 const feature = {type: 'type', targets: ['target'], apply: () => 'abc'};
                 const handler = sinon.stub();
-                handler.onFirstCall().callsFake(() => {
-                    dispatch({
-                        type: 'core:enqueue-apply',
-                        payload: [{feature, targets: [target]}]
-                    });
-                });
                 Amara([(dispatcher) => {
                     dispatch = dispatcher;
                     return handler;
                 }]).add(feature);
                 setTimeout(() => {
-                    const action = handler.lastCall.args[0];
-                    expect(action.payload).to.have.keys('type');
-                    expect(action.payload.type.size).equals(1);
-                    expect(action.payload.type.get(target)).is.a('array');
-                    expect(action.payload.type.get(target)[0]).equals('abc');
-                    done();
-                }, 2);
+                    dispatch({
+                        type: 'core:enqueue-apply',
+                        payload: [{feature, targets: [target]}]
+                    });
+                    setTimeout(() => {
+                        const action = handler.lastCall.args[0];
+                        expect(action.payload).to.have.keys('type');
+                        expect(action.payload.type.size).equals(1);
+                        expect(action.payload.type.get(target)).is.a('array');
+                        expect(action.payload.type.get(target)[0]).equals('abc');
+                        done();
+                    }, 2);
+                });
             });
 
         });
@@ -291,7 +294,7 @@ describe('Amara', function() {
                     expect(apply.calledWith({key: '123'})).true;
                     done();
                 });
-            }, 10);
+            });
         });
 
         it('arg selectors accessed on change-occurred', function(done) {

@@ -28,9 +28,9 @@
   "authors": [
     "Dan Barnes <amarajs.framework@gmail.com>"
   ],
-  "repository" : {
-    "type" : "git",
-    "url" : "https://github.com/amarajs/core.git"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/amarajs/core.git"
   },
   "license": "MIT",
   "files": [

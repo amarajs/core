@@ -158,6 +158,19 @@ export default function Amara(middleware: Types.Middleware[] = []): Types.Amara 
         connection && connection.clearCache(targets);
     }
 
+    function addFeature(feature) {
+        if (!features.includes(feature)) {
+            validate(feature);
+            setDefaults(feature);
+            addedFeatures.add(feature);
+            scheduleFeaturesAdded();
+        }
+    }
+
+    function onAddFeatures(features) {
+        features.forEach(addFeature);
+    }
+
     function handler(action) {
         const payload: any = action.payload;
         switch (action.type) {
@@ -172,6 +185,10 @@ export default function Amara(middleware: Types.Middleware[] = []): Types.Amara 
             break;
         case 'core:clear-cache':
             onClearFeatureTargetsCache(payload);
+            break;
+        case 'core:add-features':
+            onAddFeatures(payload);
+            break;
         }
     }
 
@@ -283,12 +300,8 @@ export default function Amara(middleware: Types.Middleware[] = []): Types.Amara 
         },
 
         add: function add(feature) {
-            if (!features.includes(feature)) {
-                validate(feature);
-                setDefaults(feature);
-                addedFeatures.add(feature);
-                scheduleFeaturesAdded();
-            }
+            validate(feature);
+            dispatch(getAction('core:add-features', [feature]));
             return api;
         },
 
